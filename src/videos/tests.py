@@ -37,3 +37,9 @@ class VideoModelTestCase(TestCase):
         now = timezone.now()
         publsidhed_qs = Video.objects.filter(publish_timestamp__lte=now)
         self.assertTrue(publsidhed_qs.exists())
+
+    def test_publish_manager(self):
+        published_qs = Video.objects.all().published()
+        published_qs_2 = Video.objects.published()
+        self.assertTrue(published_qs.exists())
+        self.assertEqual(published_qs.count(), published_qs_2.count())
