@@ -1,16 +1,39 @@
 from django.test import TestCase
 from videos.models import Video
+from django.utils import timezone
+from django.utils.text import slugify
+
 # Create your tests here.
+
 
 class VideoModelTestCase(TestCase):
     def setUp(self):
-        Video.objects.create(title='Scam 1992')
-    
+        self.obj_a = Video.objects.create(title="Scam 1992")
+        self.obj_b = Video.objects.create(
+            title="this is my title", state=Video.VideoStateOptions.PUBLISH
+        )
+
+    def test_slug_field(self):
+        title = self.obj_a.title
+        test_slug = slugify(title)
+        self.assertEqual(test_slug, self.obj_a.slug)
+
     def test_valid_title(self):
-        title = 'Scam 1992'
+        title = "Scam 1992"
         qs = Video.objects.filter(title=title)
         self.assertTrue(qs.exists())
+
     def test_created_count(self):
-        title = 'Scam 1992'
+        title = "Scam 1992"
         qs = Video.objects.all()
         self.assertTrue(qs.count(), 1)
+
+    def test_draft_case(self):
+        qs = Video.objects.filter(state=Video.VideoStateOptions.DRAFT)
+        self.assertEqual(qs.count(), 1)
+
+    def test_publish_count(self):
+        qs = Video.objects.filter(state=Video.VideoStateOptions.PUBLISH)
+        now = timezone.now()
+        publsidhed_qs = Video.objects.filter(publish_timestamp__lte=now)
+        self.assertTrue(publsidhed_qs.exists())
