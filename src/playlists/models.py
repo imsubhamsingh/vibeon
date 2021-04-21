@@ -32,7 +32,15 @@ class Playlist(models.Model):
     slug = models.SlugField(blank=True, null=True)
 
     # one video per playlist
-    video = models.ForeignKey(Video, null=True, on_delete=models.SET_NULL)
+    video = models.ForeignKey(
+        Video,
+        related_name="playlist_featured",
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+    )
+
+    videos = models.ManyToManyField(Video, related_name="playlist_item", blank=True)
 
     active = models.BooleanField(default=True)
 
