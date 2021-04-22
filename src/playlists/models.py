@@ -92,6 +92,9 @@ class PlaylistItem(models.Model):
     class Meta:
         ordering = ["order", "-timestamp"]
 
+    # def __str__(self):
+    # return self.video
+
 
 pre_save.connect(publish_state_pre_save, sender=Playlist)
 
