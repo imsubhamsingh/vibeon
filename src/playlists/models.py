@@ -40,7 +40,9 @@ class Playlist(models.Model):
         on_delete=models.SET_NULL,
     )
 
-    videos = models.ManyToManyField(Video, related_name="playlist_item", blank=True)
+    videos = models.ManyToManyField(
+        Video, related_name="playlist_item", blank=True, through="PlaylistItem"
+    )
 
     active = models.BooleanField(default=True)
 
@@ -75,6 +77,20 @@ class Playlist(models.Model):
             self.slug = slugify(self.title)
 
         super().save(*args, **kwargs)
+
+
+class PlaylistItem(models.Model):
+
+    video = models.ForeignKey(Video, on_delete=models.CASCADE)
+
+    playlist = models.ForeignKey(Playlist, on_delete=models.CASCADE)
+
+    order = models.IntegerField(default=1)
+
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["order", "-timestamp"]
 
 
 pre_save.connect(publish_state_pre_save, sender=Playlist)
