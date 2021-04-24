@@ -45,15 +45,22 @@ class TVShowProxyAdmin(admin.ModelAdmin):
 admin.site.register(TVShowProxy, TVShowProxyAdmin)
 
 
-# class PlaylistItemInline(admin.TabularInline):
-# model = PlaylistItem
+class PlaylistItemInline(admin.TabularInline):
+    model = PlaylistItem
+    extra = 0
 
 
-# class PlaylistAdmin(admin.ModelAdmin):
-# inlines = [PlaylistItemInline]
 #
-# class Meta:
-# model = Playlist
 #
-# admin.site.register(Playlist, PlaylistAdmin)
+class PlaylistAdmin(admin.ModelAdmin):
+    inlines = [PlaylistItemInline]
+
+    class Meta:
+        model = Playlist
+
+    def get_queryset(self, request):
+        return Playlist.objects.filter(type=Playlist.PlaylistTypeChoices.PLAYLIST)
+
+
+admin.site.register(Playlist, PlaylistAdmin)
 admin.site.register(PlaylistItem)
