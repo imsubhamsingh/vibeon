@@ -8,6 +8,20 @@ from videos.models import Video
 
 
 class PlaylistModelTestCase(TestCase):
+    def create_shows_with_seasons(self):
+        the_office = Playlist.objects.create(title="The Office Series")
+        season_1 = Playlist.objects.create(
+            title="The Office Series Season 1", parent=the_office, order=1
+        )
+        season_2 = Playlist.objects.create(
+            title="The Office Series Season 2", parent=the_office, order=2
+        )
+        season_3 = Playlist.objects.create(
+            title="The Office Series Season 3", parent=the_office, order=3
+        )
+        shows = Playlist.objects.filter(parent__isnull=True)
+        self.show = the_office
+
     def create_videos(self):
         video_a = Video.objects.create(title="My title", video_id="100")
         video_b = Video.objects.create(title="My title", video_id="101")
@@ -19,6 +33,7 @@ class PlaylistModelTestCase(TestCase):
 
     def setUp(self):
         self.create_videos()
+        self.create_shows_with_seasons()
         self.obj_a = Playlist.objects.create(title="Scam 1992", video=self.video_a)
         obj_b = Playlist.objects.create(
             title="this is my title",
@@ -28,6 +43,11 @@ class PlaylistModelTestCase(TestCase):
         obj_b.videos.set(self.video_qs)
         obj_b.save()
         self.obj_b = obj_b
+
+    def test_show_has_seasons(self):
+        seasons = self.show.playlist_set.all()
+        self.assertTrue(seasons.exists())
+        self.assertEqual(seasons.count(), 3)
 
     def test_playlist_video(self):
         self.assertEqual(self.obj_a.video, self.video_a)
@@ -61,7 +81,7 @@ class PlaylistModelTestCase(TestCase):
 
     def test_draft_case(self):
         qs = Playlist.objects.filter(state=PublishStateOptions.DRAFT)
-        self.assertEqual(qs.count(), 1)
+        self.assertEqual(qs.count(), 5)
 
     def test_publish_count(self):
         qs = Playlist.objects.filter(state=PublishStateOptions.PUBLISH)
