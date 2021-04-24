@@ -103,3 +103,34 @@ class PlaylistItem(models.Model):
 pre_save.connect(publish_state_pre_save, sender=Playlist)
 
 pre_save.connect(slugify_pre_save, sender=Playlist)
+
+
+class TVShowProxyManager(PlaylistManager):
+    def all(self):
+        return self.get_queryset().filter(parent__isnull=True)
+
+
+class TVShowProxy(Playlist):
+    objects = TVShowProxyManager()
+
+    class Meta:
+        proxy = True
+        verbose_name = "TV Show"
+        verbose_name_plural = "TV Shows"
+
+
+class TVShowSeasonProxyManager(PlaylistManager):
+    def all(self):
+        return self.get_queryset().filter(parent__isnull=False)
+
+
+class TVShowSeasonProxy(Playlist):
+    objects = TVShowSeasonProxyManager()
+
+    class Meta:
+        proxy = True
+        verbose_name = "Season"
+        verbose_name_plural = "Seasons"
+
+    def __str__(self):
+        return self.title

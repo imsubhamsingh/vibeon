@@ -1,19 +1,59 @@
 from django.contrib import admin
-from playlists.models import Playlist, PlaylistItem
+from playlists.models import Playlist, PlaylistItem, TVShowProxy, TVShowSeasonProxy
 
 # Register your models here.
 
 
-class PlaylistItemInline(admin.TabularInline):
+class SeasonEpisodeInline(admin.TabularInline):
     model = PlaylistItem
+    extra = 0
 
 
-class PlaylistAdmin(admin.ModelAdmin):
-    inlines = [PlaylistItemInline]
+class TVShowSeasonProxyAdmin(admin.ModelAdmin):
+    inlines = [SeasonEpisodeInline]
+    list_display = ["title", "parent"]
 
     class Meta:
-        model = Playlist
+        model = TVShowSeasonProxy
+
+    def get_queryset(self, request):
+        return TVShowSeasonProxy.objects.all()
 
 
-admin.site.register(Playlist, PlaylistAdmin)
+admin.site.register(TVShowSeasonProxy, TVShowSeasonProxyAdmin)
+
+
+class TVShowSeasonProxyInline(admin.TabularInline):
+    model = TVShowSeasonProxy
+    extra = 0
+    fields = ["order", "title", "state"]
+
+
+class TVShowProxyAdmin(admin.ModelAdmin):
+    inlines = [TVShowSeasonProxyInline]
+    list_display = ["title"]
+    fields = ["title", "description", "video", "state", "slug"]
+
+    class Meta:
+        model = TVShowProxy
+
+    # explicitely calling  this method
+    def get_queryset(self, request):
+        return TVShowProxy.objects.all()
+
+
+admin.site.register(TVShowProxy, TVShowProxyAdmin)
+
+
+# class PlaylistItemInline(admin.TabularInline):
+# model = PlaylistItem
+
+
+# class PlaylistAdmin(admin.ModelAdmin):
+# inlines = [PlaylistItemInline]
+#
+# class Meta:
+# model = Playlist
+#
+# admin.site.register(Playlist, PlaylistAdmin)
 admin.site.register(PlaylistItem)
