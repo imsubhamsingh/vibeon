@@ -131,6 +131,10 @@ class TVShowProxy(Playlist):
         verbose_name = "TV Show"
         verbose_name_plural = "TV Shows"
 
+    def save(self, *args, **kwargs):
+        self.type = Playlist.PlaylistTypeChoices.SHOW
+        super().save(*args, **kwargs)
+
 
 class TVShowSeasonProxyManager(PlaylistManager):
     def all(self):
@@ -149,3 +153,26 @@ class TVShowSeasonProxy(Playlist):
 
     def __str__(self):
         return self.title
+
+    def save(self, *args, **kwargs):
+        self.type = Playlist.PlaylistTypeChoices.SEASON
+        super().save(*args, **kwargs)
+
+
+class MovieProxyManager(PlaylistManager):
+    def all(self):
+        return self.get_queryset().filter(type=Playlist.PlaylistTypeChoices.MOVIE)
+
+
+class MovieProxy(Playlist):
+
+    objects = MovieProxyManager()
+
+    class Meta:
+        proxy = True
+        verbose_name = "Movie"
+        verbose_name_plural = "Movies"
+
+    def save(self, *args, **kwargs):
+        self.type = Playlist.MovieTypeChoices.MOVIE
+        super().save(*args, **kwargs)
