@@ -6,6 +6,7 @@ from playlists.models import (
     TVShowSeasonProxy,
     MovieProxy,
 )
+from tags.admin import TaggedItemAdmin, TaggedItemInline
 
 # Register your models here.
 
@@ -50,7 +51,7 @@ class TVShowSeasonProxyInline(admin.TabularInline):
 
 
 class TVShowProxyAdmin(admin.ModelAdmin):
-    inlines = [TVShowSeasonProxyInline]
+    inlines = [TaggedItemInline, TVShowSeasonProxyInline]
     list_display = ["title"]
     fields = ["title", "description", "video", "state", "category", "slug"]
 
