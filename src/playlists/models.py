@@ -1,5 +1,6 @@
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
+from django.db.models import Avg, Max, Min
 from django.db.models.signals import pre_save
 from django.utils import timezone
 from django.utils.text import slugify
@@ -8,6 +9,7 @@ from vibeon.db.receivers import publish_state_pre_save, slugify_pre_save
 from videos.models import Video
 from categories.models import Category
 from tags.models import TaggedItem
+from ratings.models import Rating
 
 
 class PlaylistQuerySet(models.QuerySet):
@@ -88,10 +90,20 @@ class Playlist(models.Model):
 
     tags = GenericRelation(TaggedItem, related_query_name="playlist")
 
+    ratings = GenericRelation(Rating, related_query_name="playlist")
+
     objects = PlaylistManager()
 
     def __str__(self):
         return self.title
+
+    def get_rating_avg(self):
+        return Playlist.objects.filter(id=self.id).aggregate(Avg("ratings__value"))
+
+    def get_rating_spread(self):
+        return Playlist.objects.filter(id=self.id).aggregate(
+            max=Max("ratings__value"), min=Min("ratings__value")
+        )
 
     def timestamp(self):
         return None
