@@ -1,5 +1,6 @@
 from django.test import TestCase
-from playlists.models import Playlist, PublishStateOptions
+from playlists.models import Playlist
+from vibeon.db.models import PublishStateOptions
 from django.utils import timezone
 from django.utils.text import slugify
 from videos.models import Video
