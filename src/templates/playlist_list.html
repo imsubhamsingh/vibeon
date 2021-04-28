@@ -18,8 +18,8 @@
 
 
 <ul>
-    {% for item in object_list %}
-       <li> {{ item.title }} {{ item.get_short_display }}</li>
+    {% for instance in object_list %}
+       <li> {{ instance.title }} : {{ instance.slug }} {{ instance.get_short_display }}</li>
     {% endfor %}
 </ul>
 {% endblock content %}
