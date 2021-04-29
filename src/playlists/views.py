@@ -1,3 +1,4 @@
+from django.http import Http404
 from django.views.generic import ListView, DetailView
 from django.shortcuts import render
 from playlists.models import (
@@ -78,7 +79,7 @@ class TVShowSeasonDetailView(PlaylistMixin, DetailView):
         )
         print(kwargs)
         if not qs.count() == 1:
-            raise Exception("Not found")
+            raise Http404
         return qs.first()
 
 
