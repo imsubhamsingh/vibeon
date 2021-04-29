@@ -1,6 +1,8 @@
 from django.http import Http404
+from django.utils import timezone
 from django.views.generic import ListView, DetailView
 from django.shortcuts import render
+from vibeon.db.models import PublishStateOptions
 from playlists.models import (
     Playlist,
     MovieProxy,
@@ -74,13 +76,33 @@ class TVShowSeasonDetailView(PlaylistMixin, DetailView):
         kwargs = self.kwargs
         show_slug = kwargs.get("showSlug")
         season_slug = kwargs.get("seasonSlug")
-        qs = self.get_queryset().filter(
-            parent__slug__iexact=show_slug, slug__icontains=season_slug
-        )
-        print(kwargs)
-        if not qs.count() == 1:
+        now = timezone.now()
+        try:
+            obj = TVShowSeasonProxy.objects.get(
+                state=PublishStateOptions.PUBLISH,
+                publish_timestamp__lte=now,
+                parent__slug__iexact=show_slug,
+                slug__iexact=season_slug,
+            )
+        except TVShowSeasonProxy.MultipleObjectsReturned:
+            obj = TVShowSeasonProxy.objects.filter(
+                parent__slug__iexact=show_slug, slug__iexact=season_slug
+            ).published()
+            obj = obj.first()
+            # log this
+        except:
             raise Http404
-        return qs.first()
+        return obj
+
+        # here we are searching with icontains
+        # but we can also use iexact, this is little slower
+        # qs = self.get_queryset().filter(
+        #     parent__slug__iexact=show_slug, slug__iexact=season_slug
+        # )
+        # print(kwargs)
+        # if not qs.count() == 1:
+        #     raise Http404
+        # return qs.first()
 
 
 class FeaturedPlaylistListView(PlaylistMixin, ListView):
