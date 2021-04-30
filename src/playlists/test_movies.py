@@ -24,6 +24,9 @@ class MovieProxyTestCase(TestCase):
         self.movie_a = MovieProxy.objects.create(
             title=self.movie_title, video=self.video_a
         )
+        self.movie_a_dup = MovieProxy.objects.create(
+            title=self.movie_title, video=self.video_a
+        )
         movie_b = MovieProxy.objects.create(
             title="Scam 1992", state=PublishStateOptions.PUBLISH, video=self.video_a
         )
@@ -39,6 +42,9 @@ class MovieProxyTestCase(TestCase):
         count = self.movie_b.videos.all().count()
         self.assertEqual(count, 3)
 
+    def test_movie_slug_unique(self):
+        self.assertNotEqual(self.movie_a_dup.slug, self.movie_a.slug)
+
     def test_slug_field(self):
         title = self.movie_title
         test_slug = slugify(title)
@@ -51,7 +57,7 @@ class MovieProxyTestCase(TestCase):
 
     def test_draft_case(self):
         qs = MovieProxy.objects.filter(state=PublishStateOptions.DRAFT)
-        self.assertEqual(qs.count(), 1)
+        self.assertEqual(qs.count(), 2)
 
     def test_publish_manager(self):
         published_qs = MovieProxy.objects.all().published()

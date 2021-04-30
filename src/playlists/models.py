@@ -5,7 +5,7 @@ from django.db.models.signals import pre_save
 from django.utils import timezone
 from django.utils.text import slugify
 from vibeon.db.models import PublishStateOptions
-from vibeon.db.receivers import publish_state_pre_save, slugify_pre_save
+from vibeon.db.receivers import publish_state_pre_save, unique_slugify_pre_save
 from videos.models import Video
 from categories.models import Category
 from tags.models import TaggedItem
@@ -96,6 +96,9 @@ class Playlist(models.Model):
     ratings = GenericRelation(Rating, related_query_name="playlist")
 
     objects = PlaylistManager()
+
+    # class Meta:
+    #     unique_together = (('title', 'slug'))
 
     def __str__(self):
         return self.title
@@ -212,13 +215,13 @@ class MovieProxy(Playlist):
 
 
 pre_save.connect(publish_state_pre_save, sender=Playlist)
-pre_save.connect(slugify_pre_save, sender=Playlist)
+pre_save.connect(unique_slugify_pre_save, sender=Playlist)
 
 pre_save.connect(publish_state_pre_save, sender=TVShowProxy)
-pre_save.connect(slugify_pre_save, sender=TVShowProxy)
+pre_save.connect(unique_slugify_pre_save, sender=TVShowProxy)
 
 pre_save.connect(publish_state_pre_save, sender=MovieProxy)
-pre_save.connect(slugify_pre_save, sender=MovieProxy)
+pre_save.connect(unique_slugify_pre_save, sender=MovieProxy)
 
 pre_save.connect(publish_state_pre_save, sender=TVShowSeasonProxy)
-pre_save.connect(slugify_pre_save, sender=TVShowSeasonProxy)
+pre_save.connect(unique_slugify_pre_save, sender=TVShowSeasonProxy)

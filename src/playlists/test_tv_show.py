@@ -11,7 +11,7 @@ from videos.models import Video
 class TVShowProxyModelTestCase(TestCase):
     def create_shows_with_seasons(self):
         the_office = TVShowProxy.objects.create(title="The Office Series")
-        season_1 = TVShowSeasonProxy.objects.create(
+        self.season_1 = TVShowSeasonProxy.objects.create(
             title="The Office Series Season 1",
             state=PublishStateOptions.PUBLISH,
             parent=the_office,
@@ -25,6 +25,9 @@ class TVShowProxyModelTestCase(TestCase):
         )
         season_4 = TVShowSeasonProxy.objects.create(
             title="The Office Series Season 4", parent=the_office, order=4
+        )
+        self.season_11 = TVShowSeasonProxy.objects.create(
+            title="The Office Series Season 1", parent=the_office, order=4
         )
         shows = TVShowProxy.objects.filter(parent__isnull=True)
         self.show = the_office
@@ -54,7 +57,10 @@ class TVShowProxyModelTestCase(TestCase):
     def test_show_has_seasons(self):
         seasons = self.show.playlist_set.all()
         self.assertTrue(seasons.exists())
-        self.assertEqual(seasons.count(), 4)
+        self.assertEqual(seasons.count(), 5)
+
+    def test_season_slug_unique(self):
+        return self.assertNotEqual(self.season_1.slug, self.season_11.slug)
 
     def test_playlist_video(self):
         self.assertEqual(self.obj_a.video, self.video_a)
@@ -97,7 +103,7 @@ class TVShowProxyModelTestCase(TestCase):
 
     def test_seasons_draft_case(self):
         qs = TVShowSeasonProxy.objects.all().filter(state=PublishStateOptions.DRAFT)
-        self.assertEqual(qs.count(), 3)
+        self.assertEqual(qs.count(), 4)
 
     def test_publish_case(self):
         qs = TVShowProxy.objects.all().filter(state=PublishStateOptions.PUBLISH)

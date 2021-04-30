@@ -1,6 +1,7 @@
 from django.utils import timezone
 from django.utils.text import slugify
 from videos.models import PublishStateOptions
+from vibeon.db.utils import get_unique_slug
 
 
 def publish_state_pre_save(sender, instance, *args, **kwargs):
@@ -14,5 +15,12 @@ def publish_state_pre_save(sender, instance, *args, **kwargs):
 
 def slugify_pre_save(sender, instance, *args, **kwargs):
     title = instance.title
-    if instance.slug is None:
-        instance.slug = slugify(instance.title)
+    slug = instance.slug
+    if slug is None:
+        instance.slug = slugify(title)
+
+
+def unique_slugify_pre_save(sender, instance, *args, **kwargs):
+    slug = instance.slug
+    if slug is not None:
+        instance.slug = get_unique_slug(instance, size=5)
