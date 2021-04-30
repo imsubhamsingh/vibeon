@@ -9,6 +9,7 @@ verify_ssl = true
 django = ">=3.2,<3.3"
 pre-commit = "*"
 install = "*"
+ipdb = "*"
 
 [requires]
 python_version = "3.8"
