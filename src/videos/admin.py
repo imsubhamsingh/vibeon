@@ -25,7 +25,7 @@ class VideoPublishedProxyAdmin(admin.ModelAdmin):
         model = VideoPublishedProxy
 
     def get_queryset(self, request):
-        return VideoAllProxy.objects.filter(active=True)
+        return VideoPublishedProxy.objects.filter(active=True)
 
 
 admin.site.register(VideoAllProxy, VideoAllAdmin)

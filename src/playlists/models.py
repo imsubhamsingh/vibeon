@@ -114,7 +114,7 @@ class Playlist(models.Model):
     def get_short_display(self):
         return ""
 
-    def get_movie_id(self):
+    def get_video_id(self):
         """
         get main video id to render video for users
         """
@@ -215,12 +215,6 @@ class TVShowProxy(Playlist):
             return None
         return self.video.get_video_id()
 
-    def get_clips(self):
-        """
-        get clips to render movie for users
-        """
-        return self.playlistitem_set.all().published()
-
 
 class TVShowSeasonProxyManager(PlaylistManager):
     def all(self):
@@ -273,12 +267,6 @@ class MovieProxy(Playlist):
         if self.video is None:
             return None
         return self.video.get_video_id()
-
-    def get_clips(self):
-        """
-        get clips to render movie for users
-        """
-        return self.playlistitem_set.all().published()
 
     class Meta:
         proxy = True
