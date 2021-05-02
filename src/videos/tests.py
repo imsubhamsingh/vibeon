@@ -3,8 +3,6 @@ from videos.models import Video, PublishStateOptions
 from django.utils import timezone
 from django.utils.text import slugify
 
-# Create your tests here.
-
 
 class VideoModelTestCase(TestCase):
     def setUp(self):
