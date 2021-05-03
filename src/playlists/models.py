@@ -1,6 +1,6 @@
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
-from django.db.models import Avg, Max, Min
+from django.db.models import Avg, Max, Min, Q
 from django.db.models.signals import pre_save
 from django.utils import timezone
 from django.utils.text import slugify
@@ -39,6 +39,10 @@ class Playlist(models.Model):
         PLAYLIST = "PLY", "Playlist"
 
     parent = models.ForeignKey("self", null=True, blank=True, on_delete=models.SET_NULL)
+
+    related = models.ManyToManyField(
+        "self", blank=True, related_name="related", through="PlaylistRelated"
+    )
 
     category = models.ForeignKey(
         Category,
@@ -178,6 +182,28 @@ class PlaylistItem(models.Model):
 
     # def __str__(self):
     # return self.playlist
+
+
+def pr_limit_choices_to():
+    return Q(type=Playlist.PlaylistTypeChoices.MOVIE) | Q(
+        type=Playlist.PlaylistTypeChoices.SHOW
+    )
+
+
+class PlaylistRelated(models.Model):
+
+    playlist = models.ForeignKey(Playlist, on_delete=models.CASCADE)
+
+    related = models.ForeignKey(
+        Playlist,
+        on_delete=models.CASCADE,
+        related_name="related_item",
+        limit_choices_to=pr_limit_choices_to,
+    )
+
+    order = models.IntegerField(default=1)
+
+    timestamp = models.DateTimeField(auto_now_add=True)
 
 
 class TVShowProxyManager(PlaylistManager):
