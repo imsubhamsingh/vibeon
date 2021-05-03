@@ -160,9 +160,6 @@ class PlaylistItemManager(models.Manager):
     def published(self):
         return self.get_queryset().published()
 
-    def featured_playlist(self):
-        return self.get_queryset().filter(type=Playlist.PlaylistTypeChoices.PLAYLIST)
-
 
 class PlaylistItem(models.Model):
 
@@ -173,6 +170,8 @@ class PlaylistItem(models.Model):
     order = models.IntegerField(default=1)
 
     timestamp = models.DateTimeField(auto_now_add=True)
+
+    objects = PlaylistItemManager()
 
     class Meta:
         ordering = ["order", "-timestamp"]
@@ -248,6 +247,8 @@ class TVShowSeasonProxy(Playlist):
         """
         get clips to render for users
         """
+        qs = self.playlistitem_set.all().published()
+        print(qs)
         return self.playlistitem_set.all().published()
 
 
