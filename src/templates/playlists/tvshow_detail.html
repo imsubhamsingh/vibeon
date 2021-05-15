@@ -19,7 +19,7 @@
 
 {% for season in object.seasons %}
 
-<li>{{ season.order }} {{ season.title }} - {{ season.slug}}  {{ season.id}}</li>
+<li>{{ forloop.counter }} - <a href="{{ season.get_absolute_url }}"> {{ season.title }}</a></li>
 
 {% endfor %}
 
