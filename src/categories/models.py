@@ -1,6 +1,8 @@
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 from tags.models import TaggedItem
+from django.db.models.signals import pre_save
+from vibeon.db.receivers import unique_slugify_pre_save
 
 # Create your models here.
 
@@ -25,3 +27,9 @@ class Category(models.Model):
 
     def __str__(self):
         return self.title
+
+    def get_absolute_url(self):
+        return f"/category/{self.slug}/"
+
+
+pre_save.connect(unique_slugify_pre_save, sender=Category)

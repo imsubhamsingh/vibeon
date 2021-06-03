@@ -29,6 +29,8 @@ from playlists.views import (
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("category/", include("categories.urls")),
+    path("categories/", include("categories.urls")),
     path("", FeaturedPlaylistListView.as_view()),
     path("movies/", MovieListView.as_view()),
     path("movies/<slug:slug>/", MovieDetailView.as_view()),
