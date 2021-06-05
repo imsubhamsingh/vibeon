@@ -2,7 +2,7 @@ from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 from tags.models import TaggedItem
 from django.db.models.signals import pre_save
-from vibeon.db.receivers import unique_slugify_pre_save
+from vibeon.db.receivers import unique_slugify_pre_save, slugify_pre_save
 
 # Create your models here.
 
@@ -32,4 +32,4 @@ class Category(models.Model):
         return f"/category/{self.slug}/"
 
 
-pre_save.connect(unique_slugify_pre_save, sender=Category)
+pre_save.connect(slugify_pre_save, sender=Category)
