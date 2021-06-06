@@ -24,6 +24,7 @@ from playlists.views import (
     TVShowListView,
     TVShowDetailView,
     TVShowSeasonDetailView,
+    SearchView,
 )
 
 
@@ -33,6 +34,7 @@ urlpatterns = [
     path("categories/", include("categories.urls")),
     path("tags/", include("tags.urls")),
     path("", FeaturedPlaylistListView.as_view()),
+    path("search/", SearchView.as_view()),
     path("movies/", MovieListView.as_view()),
     path("movies/<slug:slug>/", MovieDetailView.as_view()),
     path("media/<int:pk>/", PlaylistDetailView.as_view()),

@@ -12,7 +12,26 @@ from playlists.models import (
     TVShowSeasonProxy,
 )
 
-# Create your views here.
+
+class SearchView(PlaylistMixin, ListView):
+    """
+    A canonical Search View
+    """
+
+    def get_context_data(self):
+        context = super().get_context_data()
+        query = self.request.GET.get("q")
+        if query is not None:
+            context["title"] = f"Searched for {query}"
+        else:
+            context["title"] = "Perform as search"
+        return context
+
+    def get_queryset(self):
+        query = self.request.GET.get("q")
+        return Playlist.objects.all().search(query=query)
+
+
 class MovieListView(PlaylistMixin, ListView):
     queryset = MovieProxy.objects.all()
     title = "Movies"
